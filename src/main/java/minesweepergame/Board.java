@@ -1,8 +1,5 @@
 package minesweepergame;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
-import com.sun.tools.corba.se.idl.InvalidArgument;
-
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
