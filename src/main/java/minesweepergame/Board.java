@@ -1,10 +1,9 @@
 package minesweepergame;
 
+import javafx.scene.control.Cell;
+
 import java.awt.*;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Random;
+import java.util.*;
 
 import static minesweepergame.MinesweeperGame.ClickType;
 
@@ -176,7 +175,7 @@ public class Board {
 
         BLANK('B'),
         FLAG('F'),
-        QUESTION('F'),
+        QUESTION('?'),
         MINE('M'),
         FOUND('X'),
         EMPTY('0'),
@@ -204,8 +203,18 @@ public class Board {
             this.action = action;
         }
 
-        public static CellType fromInterger(int value){
-            return CellType.valueOf((Integer.toString(value)));
+        private static final Map<Character, CellType> byId = new HashMap<>();
+
+        static {
+            for (CellType e : CellType.values()) {
+                if (byId.put(e.getAction(), e) != null) {
+                    throw new IllegalArgumentException("duplicate id: " + e.getAction());
+                }
+            }
+        }
+
+        public static final CellType fromInterger(int value){
+            return CellType.byId.get(Integer.toString(value).charAt(0));
         }
 
     }

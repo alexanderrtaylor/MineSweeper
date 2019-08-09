@@ -1,3 +1,6 @@
+package Other;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,30 +27,30 @@ class NumComponentsTest {
     void numComponentsTest() {
         NumComponents.ListNode testList = createLinkedList(new int[]{0,1,2,3,4});
         int[] testArray = {0,3,1,4};
-        assertEquals(2, NumComponents.numComponents(testList, testArray));
+        Assertions.assertEquals(2, NumComponents.numComponents(testList, testArray));
     }
     @Test
     void numComponentsTestSimple() {
         NumComponents.ListNode testList = createLinkedList(new int[]{0,1,2,3});
         int[] testArray = {0,1,3};
-        assertEquals(2, NumComponents.numComponents(testList, testArray));
+        Assertions.assertEquals(2, NumComponents.numComponents(testList, testArray));
     }
     @Test
     void numComponentsTestSimple3() {
         NumComponents.ListNode testList = createLinkedList(new int[]{0,1,2});
         int[] testArray = {0,2};
-        assertEquals(2, NumComponents.numComponents(testList, testArray));
+        Assertions.assertEquals(2, NumComponents.numComponents(testList, testArray));
     }
     @Test
     void numComponentsTestSimple2() {
         NumComponents.ListNode testList = createLinkedList(new int[]{0,1,2});
         int[] testArray = {2,1,0};
-        assertEquals(1, NumComponents.numComponents(testList, testArray));
+        Assertions.assertEquals(1, NumComponents.numComponents(testList, testArray));
     }
     @Test
     void numComponentsTestComplex() {
         NumComponents.ListNode testList = createLinkedList(new int[]{1,2,0,4,3});
         int[] testArray = {3,4,0,2,1};
-        assertEquals(1, NumComponents.numComponents(testList, testArray));
+        Assertions.assertEquals(1, NumComponents.numComponents(testList, testArray));
     }
 }

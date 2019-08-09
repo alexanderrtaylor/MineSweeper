@@ -1,3 +1,5 @@
+package Other;
+
 public class Palendrome {
     public static boolean isPalindrome(String s) {
 
