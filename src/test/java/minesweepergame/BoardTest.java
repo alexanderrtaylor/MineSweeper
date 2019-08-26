@@ -43,6 +43,13 @@ class BoardTest{
     }
 
     @ParameterizedTest
+    @ValueSource(ints = {1, 5, 10, 20, 30})
+    void getBombVaryingCounts(int number) throws Exception {
+        newBoard = new Board(number + 1, number + 2, number);
+        assertEquals(number, newBoard.getTotalMineCount());
+    }
+
+    @ParameterizedTest
     @CsvSource(value = {"2:2", "5:10", "10:20", "25:10", "10:7"}, delimiter = ':')
     void getBoardVaryingSizes(int x, int y) throws Exception {
         newBoard = new Board(x, y);
@@ -84,6 +91,7 @@ class BoardTest{
         expectedBoard[0][0] = Board.CellType.fromInterger(nearbyMines);
         expectedBoard[bombLocationPoint.y][bombLocationPoint.x] = Board.CellType.MINE;
         assertArrayEquals(expectedBoard, newBoard.getBoard());
+        assertTrue(newBoard.click(bombLocationPoint, MinesweeperGame.ClickType.FLAG));
         assertThrows(Exception.class, () -> newBoard.click(notBombLocationPoint1, MinesweeperGame.ClickType.FLAG));
 
         newBoard2 = new Board(x, y, 1, 1);
