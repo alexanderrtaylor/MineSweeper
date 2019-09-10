@@ -14,18 +14,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BoardTest{
     
-    Point bombLocationPoint;
-    Point notBombLocationPoint1;
-    Point notBombLocationPoint2;
+    Point mineLocationPoint;
+    Point notmineLocationPoint1;
+    Point notmineLocationPoint2;
     Board newBoard;
     Board newBoard2;
     Board.CellType[][] expectedBoard;
     
     @BeforeEach
     void initialize(){
-        bombLocationPoint = new Point();
-        notBombLocationPoint1 = new Point(0, 0);
-        notBombLocationPoint2 = new Point(1, 1);
+        mineLocationPoint = new Point();
+        notmineLocationPoint1 = new Point(0, 0);
+        notmineLocationPoint2 = new Point(1, 1);
     }
 
     @ParameterizedTest
@@ -44,7 +44,7 @@ class BoardTest{
 
     @ParameterizedTest
     @ValueSource(ints = {1, 5, 10, 20, 30})
-    void getBombVaryingCounts(int number) throws Exception {
+    void getmineVaryingCounts(int number) throws Exception {
         newBoard = new Board(number + 1, number + 2, number);
         assertEquals(number, newBoard.getTotalMineCount());
     }
@@ -62,7 +62,7 @@ class BoardTest{
 
     @ParameterizedTest
     @CsvSource(value = {"2:2", "5:10", "10:20", "25:10", "10:7"}, delimiter = ':')
-    void checkForBombTest(int x, int y) throws Exception {
+    void checkFormineTest(int x, int y) throws Exception {
         newBoard = new Board(x, y, 1, 0);
         expectedBoard = new Board.CellType[y][x];
         for (int i = 0; i < y; i++){
@@ -76,8 +76,8 @@ class BoardTest{
     void clickTest(int x, int y, int mine_x,  int mine_y, int nearbyMines) throws Exception {
         //TODO: Check for numbers being modified as flags and question marks
         newBoard = new Board(x, y, 1, 1);
-        bombLocationPoint.x = mine_x;
-        bombLocationPoint.y = mine_y;
+        mineLocationPoint.x = mine_x;
+        mineLocationPoint.y = mine_y;
 
         Board.CellType[][] expectedBoard = new Board.CellType[y][x];
         for (int i = 0; i < y; i++){
@@ -85,39 +85,39 @@ class BoardTest{
         }
         assertArrayEquals(expectedBoard, newBoard.getBoard());
 
-        assertFalse(newBoard.click(bombLocationPoint, MinesweeperGame.ClickType.TEST));
-        assertTrue(newBoard.click(notBombLocationPoint1, MinesweeperGame.ClickType.TEST));
+        assertFalse(newBoard.click(mineLocationPoint, MinesweeperGame.ClickType.TEST));
+        assertTrue(newBoard.click(notmineLocationPoint1, MinesweeperGame.ClickType.TEST));
 
         expectedBoard[0][0] = Board.CellType.fromInterger(nearbyMines);
-        expectedBoard[bombLocationPoint.y][bombLocationPoint.x] = Board.CellType.MINE;
+        expectedBoard[mineLocationPoint.y][mineLocationPoint.x] = Board.CellType.MINE;
         assertArrayEquals(expectedBoard, newBoard.getBoard());
-        assertTrue(newBoard.click(bombLocationPoint, MinesweeperGame.ClickType.FLAG));
-        assertThrows(Exception.class, () -> newBoard.click(notBombLocationPoint1, MinesweeperGame.ClickType.FLAG));
+        assertTrue(newBoard.click(mineLocationPoint, MinesweeperGame.ClickType.FLAG));
+        assertThrows(Exception.class, () -> newBoard.click(notmineLocationPoint1, MinesweeperGame.ClickType.FLAG));
 
         newBoard2 = new Board(x, y, 1, 1);
         expectedBoard[0][0] = Board.CellType.BLANK;
 
 
-        assertTrue(newBoard2.click(bombLocationPoint, MinesweeperGame.ClickType.FLAG));
-        assertTrue(newBoard2.click(bombLocationPoint, MinesweeperGame.ClickType.FLAG));
-        assertThrows(Exception.class, () -> newBoard2.click(notBombLocationPoint1, MinesweeperGame.ClickType.FLAG));
+        assertTrue(newBoard2.click(mineLocationPoint, MinesweeperGame.ClickType.FLAG));
+        assertTrue(newBoard2.click(mineLocationPoint, MinesweeperGame.ClickType.FLAG));
+        assertThrows(Exception.class, () -> newBoard2.click(notmineLocationPoint1, MinesweeperGame.ClickType.FLAG));
         expectedBoard[mine_y][mine_x] = Board.CellType.FLAG;
         assertArrayEquals(expectedBoard, newBoard2.getBoard());
-        assertTrue(newBoard2.click(bombLocationPoint, MinesweeperGame.ClickType.BLANK));
-        assertTrue(newBoard2.click(notBombLocationPoint2, MinesweeperGame.ClickType.FLAG));
+        assertTrue(newBoard2.click(mineLocationPoint, MinesweeperGame.ClickType.BLANK));
+        assertTrue(newBoard2.click(notmineLocationPoint2, MinesweeperGame.ClickType.FLAG));
 
 
         //unset the flag and ensure I am allowed to add new ones
-        assertTrue(newBoard2.click(bombLocationPoint, MinesweeperGame.ClickType.BLANK));
-        assertTrue(newBoard2.click(notBombLocationPoint1, MinesweeperGame.ClickType.BLANK));
-        assertTrue(newBoard2.click(notBombLocationPoint2, MinesweeperGame.ClickType.BLANK));
-        assertTrue(newBoard2.click(notBombLocationPoint1, MinesweeperGame.ClickType.FLAG));
+        assertTrue(newBoard2.click(mineLocationPoint, MinesweeperGame.ClickType.BLANK));
+        assertTrue(newBoard2.click(notmineLocationPoint1, MinesweeperGame.ClickType.BLANK));
+        assertTrue(newBoard2.click(notmineLocationPoint2, MinesweeperGame.ClickType.BLANK));
+        assertTrue(newBoard2.click(notmineLocationPoint1, MinesweeperGame.ClickType.FLAG));
         expectedBoard[mine_y][mine_x] = Board.CellType.BLANK;
         expectedBoard[0][0] = Board.CellType.FLAG;
         assertArrayEquals(expectedBoard, newBoard2.getBoard());
 
-        assertTrue(newBoard2.click(notBombLocationPoint1, MinesweeperGame.ClickType.QUESTION));
-        assertTrue(newBoard2.click(bombLocationPoint, MinesweeperGame.ClickType.FLAG));
+        assertTrue(newBoard2.click(notmineLocationPoint1, MinesweeperGame.ClickType.QUESTION));
+        assertTrue(newBoard2.click(mineLocationPoint, MinesweeperGame.ClickType.FLAG));
         expectedBoard[mine_y][mine_x] = Board.CellType.FLAG;
         expectedBoard[0][0] = Board.CellType.QUESTION;
         assertArrayEquals(expectedBoard, newBoard2.getBoard());
@@ -131,13 +131,13 @@ class BoardTest{
         newBoard = new Board(x, y, 1, 1);;
 
         assertEquals(0, newBoard.getFlaggedCount());
-        assertTrue(newBoard.click(notBombLocationPoint1, MinesweeperGame.ClickType.FLAG));
+        assertTrue(newBoard.click(notmineLocationPoint1, MinesweeperGame.ClickType.FLAG));
         assertEquals(1, newBoard.getFlaggedCount());
 
-        assertThrows(Exception.class, () -> newBoard.click(notBombLocationPoint2, MinesweeperGame.ClickType.FLAG));
+        assertThrows(Exception.class, () -> newBoard.click(notmineLocationPoint2, MinesweeperGame.ClickType.FLAG));
         assertEquals(1, newBoard.getFlaggedCount());
 
-        assertTrue(newBoard.click(notBombLocationPoint1, MinesweeperGame.ClickType.BLANK));
+        assertTrue(newBoard.click(notmineLocationPoint1, MinesweeperGame.ClickType.BLANK));
         assertEquals(0, newBoard.getFlaggedCount());
     }
 

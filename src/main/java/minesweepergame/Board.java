@@ -1,5 +1,8 @@
 package minesweepergame;
 
+import com.sun.deploy.util.ArrayUtil;
+import org.apache.commons.lang3.StringUtils;
+
 import java.awt.*;
 import java.util.*;
 import java.util.function.Consumer;
@@ -11,19 +14,35 @@ import static minesweepergame.MinesweeperGame.ClickType;
 
 public class Board {
     private CellType[][] board;
-    private Set<Point> bombLocations = new HashSet<>();
-    Random rand;
+    private Set<Point> mineLocations = new HashSet<>();
+
+    Set<Point> getMineLocations() {
+        return mineLocations;
+    }
+
     private Set<Point> flagLocations = new HashSet<>();
+
+    public Set<Point> getFlagLocations(){
+        return flagLocations;
+    }
+
+    public boolean addFlagLocation(Point location){
+        return flagLocations.add(location);
+    }
 
     Board(int width, int height)  throws Exception  {
         this(width, height, 0, -1);
     }
 
-    Board(int width, int height, int numberOfBombs)  throws Exception  {
-        this(width, height, numberOfBombs, -1);
+    Board(int width, int height, int numberOfmines)  throws Exception  {
+        this(width, height, numberOfmines, -1);
     }
 
-    Board(int width, int height, int numberOfBombs, int seed) throws Exception {
+    Board(int width, int height, int numberOfmines, int seed) throws Exception {
+        this(width, height, generateMineSet(width, height,numberOfmines, seed));
+    }
+
+    Board(int width, int height, Set<Point> locations) throws Exception {
 
         if (width <= 0 || height <= 0){
             //check for invalid sizes in tests
@@ -35,22 +54,31 @@ public class Board {
             Arrays.fill(boardStart[i], CellType.BLANK);
         }
 
-        rand = (seed==-1) ? new Random(): new Random(seed);
         board = boardStart;
-
-        if (numberOfBombs < 1){
-            numberOfBombs = defaultBombCount();
-        }
-
-        for (int i = 0; i < numberOfBombs; i++){
-            addNewBomb();
-        }
+        //Make sure to check if locations are off the board
+        //if(Collections.locations)
+        mineLocations = new HashSet<Point>(locations);
     }
 
-    private void addNewBomb() {
-        int width = getWidth();
-        int height = getHeight();
-        while(!bombLocations.add(randomPoint(width, height))){}
+    private static Set<Point> generateMineSet(int width, int height, int numberOfmines, int seed) throws Exception {
+        if (numberOfmines > width * height){
+            throw new Exception("You have tried to create a board with too mines");
+        }
+        Set<Point> locations = new HashSet<>();
+        Random rand;
+        rand = (seed==-1) ? new Random(): new Random(seed);
+        if (numberOfmines < 1){
+            numberOfmines = defaultmineCount(width, height);
+        }
+
+        for (int i = 0; i < numberOfmines; i++){
+            addNewmine(width, height, locations, rand);
+        }
+        return locations;
+    }
+
+    private static void addNewmine(int width, int height, Set<Point> locationSet, Random rand) {
+        while(!locationSet.add(randomPoint(width, height, rand))){}
     }
 
     int getWidth(){
@@ -61,12 +89,17 @@ public class Board {
     }
 
     CellType[][] getBoard(){
-        return board;
+        CellType[][] boardValue = new CellType[getHeight()][getWidth()];
+        for(int j = 0 ; j < getHeight(); j++){
+            boardValue[j] = Arrays.copyOf(board[j], getWidth());
+        }
+        return boardValue;
     }
 
-    boolean checkForBomb(Point location){
-        for(Point bombCheck: bombLocations){
-            if (location.equals(bombCheck)) {
+    //replace mine for mines
+    boolean checkFormine(Point location){
+        for(Point mineCheck: getMineLocations()){
+            if (location.equals(mineCheck)) {
                 return true;
             }
         }
@@ -75,8 +108,8 @@ public class Board {
 
     boolean click(Point location, ClickType clickType) throws Exception {
 
-        if(flagLocations.contains(location)){
-            flagLocations.remove(location);
+        if(getFlagLocations().contains(location)){
+            getFlagLocations().remove(location);
         }
         //Make sure first click is OK
         if (CellType.ClickableType(board[location.y][location.x])){
@@ -87,17 +120,17 @@ public class Board {
         }
     }
     public int getTotalMineCount(){
-        return bombLocations.size();
+        return getMineLocations().size();
     }
     public int getFlaggedCount(){
-        return flagLocations.size();
+        return getFlagLocations().size();
     }
 
     public void revealBoard(){
-        bombLocations.forEach(point ->
+        getMineLocations().forEach(point ->
         {
             if (board[point.y][point.x] == CellType.FLAG){
-                //do flags and then reveal board to show `Found` bombs
+                //do flags and then reveal board to show `Found` mines
                 board[point.y][point.x] = CellType.FOUND;
             }
             else {
@@ -106,15 +139,15 @@ public class Board {
 
         });
     }
-    private Point randomPoint(int width, int height){
+    private static Point randomPoint(int width, int height, Random rand){
         Point location = new Point();
         //Create the mine locations
         location.x = rand.nextInt(width);
         location.y = rand.nextInt(height);
         return location;
     }
-    private int defaultBombCount(){
-        int tenPercent = (getWidth() * getHeight())/10;
+    private static int defaultmineCount(int width, int height){
+        int tenPercent = (width * height)/10;
         return (tenPercent > 1) ? tenPercent : 1;
     }
 
@@ -124,7 +157,7 @@ public class Board {
         //Hacky?
         final Integer[] count = {0};
         forEachSurrounding(location, testPoint -> {
-            if (bombLocations.contains(testPoint)) {
+            if (getMineLocations().contains(testPoint)) {
                 count[0]++;
             }
         });
@@ -151,7 +184,7 @@ public class Board {
     private boolean tryClick(Point location, ClickType clickType) throws Exception{
         if (CellType.ClickableType(board[location.y][location.x])) {
             if (clickType == ClickType.TEST) {
-                if (!checkForBomb(location)) {
+                if (!checkFormine(location)) {
                     int cellTypeNumber = findSurroundingMines(location);
                     board[location.y][location.x] = CellType.fromInterger(cellTypeNumber);
                     //maybe move this to the Minesweeper game
@@ -175,10 +208,10 @@ public class Board {
                 return true;
             }
             if (clickType == ClickType.FLAG) {
-                if (flagLocations.size() >= bombLocations.size()) {
+                if (getFlagLocations().size() >= getMineLocations().size()) {
                     throw new Exception("Not allowed to have more flags than mines");
                 }
-                flagLocations.add(location);
+                addFlagLocation(location);
                 board[location.y][location.x] = CellType.FLAG;
                 return true;
             }
@@ -186,13 +219,13 @@ public class Board {
                 board[location.y][location.x] = CellType.BLANK;
                 return true;
             }
-        }
+        }//Throw exception
         return true;
     }
 
     //Check if mines and flags are in the same locations
     public boolean flaggedAllMines(){
-        return flagLocations.containsAll(bombLocations);
+        return getFlagLocations().containsAll(getMineLocations());
     }
 
 
@@ -279,6 +312,11 @@ public class Board {
 
         public static final CellType fromInterger(int value){
             return CellType.byId.get(Integer.toString(value).charAt(0));
+        }
+
+        @Override
+        public String toString(){
+            return Character.toString(getAction());
         }
 
     }
