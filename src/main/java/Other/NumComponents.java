@@ -1,5 +1,3 @@
-package Other;
-
 import java.util.HashSet;
 
 public class NumComponents {

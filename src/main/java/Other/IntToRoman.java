@@ -1,5 +1,3 @@
-package Other;
-
 public class IntToRoman {
 
     private static char[] romanSource = {'M','D','C','L','X','V', 'I'};

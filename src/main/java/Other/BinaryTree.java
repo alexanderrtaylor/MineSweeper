@@ -1,5 +1,3 @@
-package Other;
-
 public class BinaryTree {
 
     public class TreeNode {

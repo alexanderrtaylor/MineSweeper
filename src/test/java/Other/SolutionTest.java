@@ -1,19 +1,16 @@
-package Other;
-
 import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class SolutionTest {
 
     @Test
     public void numJewelsInStonesTest() {
-        assertEquals(3, Solution.numJewelsInStones("aA", "aAAbbbb"));
-        assertEquals(0, Solution.numJewelsInStones("aA", "125Ils\\"));
-        assertEquals(3, Solution.numJewelsInStones("aA", "125Ils\naAAbbbb"));
-        assertEquals(0, Solution.numJewelsInStones("aA", ""));
-        assertEquals(0, Solution.numJewelsInStones("", "aAAbbbb"));
-        assertEquals(0, Solution.numJewelsInStones(null, "aAAbbbb"));
-        assertEquals(0, Solution.numJewelsInStones("aA", null));
+        Assertions.assertEquals(3, Solution.numJewelsInStones("aA", "aAAbbbb"));
+        Assertions.assertEquals(0, Solution.numJewelsInStones("aA", "125Ils\\"));
+        Assertions.assertEquals(3, Solution.numJewelsInStones("aA", "125Ils\naAAbbbb"));
+        Assertions.assertEquals(0, Solution.numJewelsInStones("aA", ""));
+        Assertions.assertEquals(0, Solution.numJewelsInStones("", "aAAbbbb"));
+        Assertions.assertEquals(0, Solution.numJewelsInStones(null, "aAAbbbb"));
+        Assertions.assertEquals(0, Solution.numJewelsInStones("aA", null));
 
     }
 }

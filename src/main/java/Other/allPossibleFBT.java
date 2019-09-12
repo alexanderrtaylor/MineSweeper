@@ -1,5 +1,3 @@
-package Other;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,30 +42,30 @@ public class allPossibleFBT {
         }
                 /*if(returnedList.size()){
                         //Left side
-                        returnedList.get(i).left = Other.allPossibleFBT(1 + i).get(i);
+                        returnedList.get(i).left = allPossibleFBT(1 + i).get(i);
                         //Right side
-                        returnedList.get(i).right = Other.allPossibleFBT(N - i).get(i);
+                        returnedList.get(i).right = allPossibleFBT(N - i).get(i);
                     }
                     else{
-                        returnedList.add(Other.allPossibleFBT(1).get(i));
+                        returnedList.add(allPossibleFBT(1).get(i));
                         //Left side
-                        returnedList.get(i).left = Other.allPossibleFBT(1 + i).get(i);
+                        returnedList.get(i).left = allPossibleFBT(1 + i).get(i);
                         //Right side
-                        returnedList.get(i).right = Other.allPossibleFBT(N - i).get(i);
+                        returnedList.get(i).right = allPossibleFBT(N - i).get(i);
                     }
 
                 }*/
                 /*for(int i = 0; i< N/2; i++){
                     //Left side
                     if(returnedList.size()){
-                        returnedList.get(i).left = Other.allPossibleFBT(1 + i*2).get(i);
+                        returnedList.get(i).left = allPossibleFBT(1 + i*2).get(i);
                     }
                     else{
-                        returnedList.add(Other.allPossibleFBT(1).get(i));
-                        returnedList.get(i).left = Other.allPossibleFBT(1 + i*2).get(i);
+                        returnedList.add(allPossibleFBT(1).get(i));
+                        returnedList.get(i).left = allPossibleFBT(1 + i*2).get(i);
                     }
                     //Right side
-                    returnedList.get(i).right = Other.allPossibleFBT(1 - i*2).get(i);
+                    returnedList.get(i).right = allPossibleFBT(1 - i*2).get(i);
                 }*/
         return returnedList;
     }
